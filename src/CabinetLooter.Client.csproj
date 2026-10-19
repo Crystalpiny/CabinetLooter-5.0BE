@@ -1,0 +1,155 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- SPT 5.0BE runs the client on IL2CPP with BepInEx 6; the bundled runtime is .NET 10 and
+         Il2CppInterop.Runtime targets net10.0, so the plugin must too (build with a .NET 10 SDK). -->
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>CabinetLooter</RootNamespace>
+    <AssemblyName>CabinetLooter.Client</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ImplicitUsings>disable</ImplicitUsings>
+
+    <!-- Must match CabinetLooterPlugin.PluginVersion. -->
+    <Version>1.0.2</Version>
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <FileVersion>1.0.2.0</FileVersion>
+    <Product>Cabinet Looter 1.0.2 (SPT 5.0BE port)</Product>
+    <Company>MyButtHasARash / SPT 5.0BE port</Company>
+    <Description>Open any drawer of a filing cabinet and loot the whole cabinet from one window.</Description>
+    <Copyright>MIT License</Copyright>
+
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <DebugType>none</DebugType>
+    <NoWarn>$(NoWarn);CS0618;CS0612</NoWarn>
+
+    <!-- Game root: this project lives in BepInEx\plugins\CabinetLooter\source. -->
+    <ClientRoot Condition="'$(ClientRoot)' == ''">$(MSBuildThisFileDirectory)..\..\..\..</ClientRoot>
+    <BepInExCore>$(ClientRoot)\BepInEx\core</BepInExCore>
+    <Interop>$(ClientRoot)\BepInEx\interop</Interop>
+    <PluginDeployDir>$(ClientRoot)\BepInEx\plugins\CabinetLooter</PluginDeployDir>
+  </PropertyGroup>
+
+  <Target Name="ValidateClientRoot" BeforeTargets="BeforeBuild">
+    <Error Condition="!Exists('$(BepInExCore)\BepInEx.Unity.IL2CPP.dll')"
+           Text="ClientRoot ('$(ClientRoot)') is not an SPT 5.0BE install root: no BepInEx\core\BepInEx.Unity.IL2CPP.dll." />
+    <Error Condition="!Exists('$(Interop)\Assembly-CSharp.dll')"
+           Text="No BepInEx\interop\Assembly-CSharp.dll under ClientRoot. Start the game through the SPT Launcher once so the interop assemblies are generated." />
+  </Target>
+
+  <ItemGroup>
+    <!-- BepInEx 6 (IL2CPP) -->
+    <Reference Include="BepInEx.Core">
+      <HintPath>$(BepInExCore)\BepInEx.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="BepInEx.Unity.IL2CPP">
+      <HintPath>$(BepInExCore)\BepInEx.Unity.IL2CPP.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(BepInExCore)\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Il2CppInterop.Runtime">
+      <HintPath>$(BepInExCore)\Il2CppInterop.Runtime.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <!-- IL2CPP interop (5.0BE) -->
+    <Reference Include="Il2Cppmscorlib">
+      <HintPath>$(Interop)\Il2Cppmscorlib.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Il2CppSystem">
+      <HintPath>$(Interop)\Il2CppSystem.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(Interop)\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Diz.Binding">
+      <HintPath>$(Interop)\Diz.Binding.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="ItemComponent.Types">
+      <HintPath>$(Interop)\ItemComponent.Types.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="ItemTemplate.Types">
+      <HintPath>$(Interop)\ItemTemplate.Types.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- SimpleStashPanel & co. derive from Sirenix's SerializedMonoBehaviour -->
+    <Reference Include="Sirenix.Serialization">
+      <HintPath>$(Interop)\Sirenix.Serialization.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Sirenix.Serialization.Config">
+      <HintPath>$(Interop)\Sirenix.Serialization.Config.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Sirenix.Utilities">
+      <HintPath>$(Interop)\Sirenix.Utilities.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Sirenix.OdinInspector.Attributes">
+      <HintPath>$(Interop)\Sirenix.OdinInspector.Attributes.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Comfort">
+      <HintPath>$(Interop)\Comfort.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="CommonExtensions">
+      <HintPath>$(Interop)\CommonExtensions.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(Interop)\Unity.TextMeshPro.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(Interop)\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(Interop)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(Interop)\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(Interop)\UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>$(Interop)\UnityEngine.UIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>$(Interop)\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(Interop)\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>$(Interop)\UnityEngine.ImageConversionModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Opt-in: dotnet build -c Release -p:DeployToSPT=true -->
+  <Target Name="DeployToSPT" AfterTargets="Build" Condition="'$(DeployToSPT)' == 'true'">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(PluginDeployDir)" />
+    <Message Importance="high" Content="Deployed $(TargetFileName) to $(PluginDeployDir)" />
+  </Target>
+
+</Project>
